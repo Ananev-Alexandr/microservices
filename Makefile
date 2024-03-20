@@ -34,4 +34,15 @@ generate-chat-api:
 	--go-grpc_out=pkg/chat_api --go-grpc_opt=paths=source_relative \
 	--plugin=protoc-gen-go-grpc="$(PROTOC_GEN_GO_GRPC)" \
 	api/chat-server/chat_api.proto
-	
+
+build:
+	GOOS=linux GOARCH=amd64 go build -o service_linux cmd/grpc_server/main.go
+
+copy-to-server:
+	scp service_linux root@10.10.19.111:
+
+
+docker-build-and-push:
+	docker buildx build --no-cache --platform linux/amd64 -t .../test-server:v0.0.1 .
+	docker login -u token -p ... ...
+	docker push .../test-server:v0.0.1
